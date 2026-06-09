@@ -1,6 +1,7 @@
 import os
-from dataclasses import dataclass
-from git import Repo
+
+from models.repository import Repository
+from models.symbols import *
 
 EXTENSION_MAP = {
     "py": "python",
@@ -22,43 +23,10 @@ EXTENSION_MAP = {
 
 IGNORE = {".git", "node_modules", "env", ".venv", "package-lock.json", "__pycache__", ".next"}
 
-@dataclass
-class FileNode:
-    path: str
-    language: str
-    size: int
-    extension: str
-
-    imports: list[str] | None = None
-    exports: list[str] | None = None
-
-@dataclass
-class Repository:
-    root: str
-    files: dict[str, FileNode]
-
 def detect_language(filename: str) -> str:
     ext = filename.rsplit(".", 1)[-1] if "." in filename else ""
     return EXTENSION_MAP.get(ext, "unknown")
 
-def clone_repo(url: str) -> str:
-    repo_name = url.split("/")[-1]
-    local_dir = os.path.abspath(f"./repos/{repo_name}")
-
-    if not os.path.exists(local_dir):
-        Repo.clone_from(url, local_dir)
-    else:
-        print("Repo already exists")
-
-    return local_dir
-
-def load_repository(url: str) -> Repository:
-    root = clone_repo(url)
-
-    return Repository(
-        root=root,
-        files=build_struct(root),
-    )
 
 def build_struct(path: str, root: str | None = None) -> dict[str, FileNode]:
     result = {}
@@ -78,7 +46,7 @@ def build_struct(path: str, root: str | None = None) -> dict[str, FileNode]:
         else:
             ext = item.rsplit(".", 1)[-1] if "." in item else ""
             result[rel_path] = FileNode(
-                path=abs_path,
+                path=rel_path,
                 language=detect_language(item),
                 size=os.path.getsize(abs_path),
                 extension=ext,
