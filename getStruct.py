@@ -27,6 +27,15 @@ class FileNode:
     path: str
     language: str
     size: int
+    extension: str
+
+    imports: list[str] | None = None
+    exports: list[str] | None = None
+
+@dataclass
+class Repository:
+    root: str
+    files: dict[str, FileNode]
 
 def detect_language(filename: str) -> str:
     ext = filename.rsplit(".", 1)[-1] if "." in filename else ""
@@ -43,30 +52,41 @@ def clone_repo(url: str) -> str:
 
     return local_dir
 
-def build_struct(path: str) -> dict[str, FileNode]:
+def load_repository(url: str) -> Repository:
+    root = clone_repo(url)
+
+    return Repository(
+        root=root,
+        files=build_struct(root),
+    )
+
+def build_struct(path: str, root: str | None = None) -> dict[str, FileNode]:
     result = {}
+    if root is None:
+        root = path
+
 
     for item in os.listdir(path):
         if item in IGNORE:
             continue
 
         abs_path = os.path.join(path, item)
-        rel_path = os.path.relpath(abs_path)
+        rel_path = os.path.relpath(abs_path, root)
 
         if os.path.isdir(abs_path):
-            result.update(build_struct(abs_path))
+            result.update(build_struct(abs_path, root))
         else:
+            ext = item.rsplit(".", 1)[-1] if "." in item else ""
             result[rel_path] = FileNode(
-                path=rel_path,
+                path=abs_path,
                 language=detect_language(item),
                 size=os.path.getsize(abs_path),
+                extension=ext,
             )
 
     return result
 
 
-local_dir = clone_repo("https://github.com/VOTMAN/SynciNote")
-struct = build_struct(local_dir)
-
-for path, node in struct.items():
-    print(f"{node.language:12} {node.size:6}B  {path}")
+def print_struct(result: dict[str, FileNode]) -> None:
+    for path, node in result.items():
+        print(f"{node.language:12} {node.size:6}B  {path}")
