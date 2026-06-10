@@ -18,6 +18,9 @@ TYPE_MAP = {
 
     "interface_declaration": "interface",
     "type_alias_declaration": "type",
+
+    "lexical_declaration": "variable",
+    "assignment": "variable"
 }
 
 def parse_imports(import_matches: list[int, dict], code: str) -> list[str]:
@@ -64,8 +67,23 @@ def parse_chunks(chunk_matches, exported_pos: set, code: str, file_node) -> list
 
     return chunks
 
+
 def extract(file_node: FileNode, tree, source_code):
+    if not tree:
+        file_node.chunks = [ChunkNode(
+            name=file_node.path.split("/")[-1],
+            kind="file",
+            path=file_node.path,
+            content=source_code,
+            start_line=0,
+            end_line=len(source_code),
+            exported="unknown",
+            language=file_node.language
+        )]
+        return file_node
+
     extractor = EXTRACTORS.get(file_node.extension)
+
     if extractor is None:
         return []
     

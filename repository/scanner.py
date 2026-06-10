@@ -21,7 +21,7 @@ EXTENSION_MAP = {
     "toml": "toml",
 }
 
-IGNORE = {".git", "node_modules", "env", ".venv", "package-lock.json", "__pycache__", ".next"}
+IGNORE = {".git", "node_modules", "env", ".venv", "package-lock.json", "__pycache__", ".next", "README.md"}
 
 def detect_language(filename: str) -> str:
     ext = filename.rsplit(".", 1)[-1] if "." in filename else ""

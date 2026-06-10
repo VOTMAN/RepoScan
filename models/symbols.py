@@ -9,7 +9,7 @@ class ChunkNode:
     content: str
     start_line: int
     end_line: int
-    exported: bool = False
+    exported: bool | str = False 
     language: str = ""
 
 @dataclass
