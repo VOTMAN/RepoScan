@@ -3,13 +3,13 @@ import os
 from repository.load import load_repository
 from .parser_registry import get_parser
 
-def get_tree(repo_url = "https://github.com/VOTMAN/SynciNote"):
+def get_tree(repo_url = None):
     trees = {}
     if repo_url == None:
         print("No repo link given")
         return
     
-    repo = load_repository("https://github.com/VOTMAN/SynciNote")
+    repo = load_repository(repo_url)
 
 
     for rel_path, node in repo.files.items():
@@ -29,4 +29,4 @@ def get_tree(repo_url = "https://github.com/VOTMAN/SynciNote"):
             print(f"Failed to parse: {rel_path}")
             print(e)
 
-    return trees
+    return repo, trees

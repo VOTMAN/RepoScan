@@ -1,4 +1,22 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+
+
+@dataclass
+class ChunkNode:
+    name: str
+    kind: str            # "function", "class", "interface", "type"
+    path: str
+    content: str
+    start_line: int
+    end_line: int
+    exported: bool = False
+    language: str = ""
+
+@dataclass
+class ImportNode:
+    module: str
+    names: list[str]
+    is_relative: bool
 
 @dataclass
 class FileNode:
@@ -7,17 +25,6 @@ class FileNode:
     size: int
     extension: str
 
-    imports: list[str] | None = None
-    exports: list[str] | None = None
-
-@dataclass
-class FunctionNode:
-    name: str
-    infiles: list[str]
-    path: str
-
-@dataclass
-class ClassNode:
-    name:str
-    infiles: list[str]
-    path: str
+    imports: list[ImportNode] = field(default_factory=list)
+    exports: list[str] = field(default_factory=list)
+    chunks: list[ChunkNode] = field(default_factory=list)
