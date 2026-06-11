@@ -21,6 +21,22 @@ EXTENSION_MAP = {
     "toml": "toml",
 }
 
+SUPPORTED_EXTENSIONS = {
+    "py",
+    "js",
+    "ts",
+    "tsx",
+    "jsx",
+    "svelte",
+    "css",
+    "html",
+    "json",
+    "yaml",
+    "yml",
+    "toml",
+    "md"
+}
+
 IGNORE = {".git", "node_modules", "env", ".venv", "package-lock.json", "__pycache__", ".next", "README.md"}
 
 def detect_language(filename: str) -> str:
@@ -45,6 +61,10 @@ def build_struct(path: str, root: str | None = None) -> dict[str, FileNode]:
             result.update(build_struct(abs_path, root))
         else:
             ext = item.rsplit(".", 1)[-1] if "." in item else ""
+
+            if ext not in SUPPORTED_EXTENSIONS:
+                continue
+
             result[rel_path] = FileNode(
                 path=rel_path,
                 language=detect_language(item),

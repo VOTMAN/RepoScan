@@ -10,7 +10,7 @@ def load_repository(url: str) -> Repository:
 
     return Repository(
         root=root,
-        files=build_struct(root),
+        files=build_struct(path=root),
     )
 
     # return Repository(

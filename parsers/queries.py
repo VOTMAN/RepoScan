@@ -20,6 +20,18 @@ QUERIES = {
             ( assignment 
                 left: (identifier) @name
             ) @chunk
+
+            ( decorator 
+            	(call
+                	function: (identifier) @name
+                )	
+            ) @chunk
+            
+            ( expression_statement  
+            	(call
+                	function: (identifier) @name
+                )	
+            ) @chunk
         """
     },
 
