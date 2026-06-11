@@ -1,16 +1,17 @@
-import os 
+import os
 
 from repository.load import load_repository
+
 from .parser_registry import get_parser
 
-def get_tree(repo_url = None):
+
+def get_tree(repo_url=None):
     trees = {}
-    if repo_url == None:
+    if repo_url is None:
         print("No repo link given")
         return
-    
-    repo = load_repository(repo_url)
 
+    repo = load_repository(repo_url)
 
     for rel_path, node in repo.files.items():
         parser = get_parser(node.extension)
@@ -19,7 +20,7 @@ def get_tree(repo_url = None):
             continue
 
         abs_path = os.path.join(repo.root, node.path)
-        try: 
+        try:
             with open(abs_path, "r", encoding="utf-8") as f:
                 code = f.read()
 
