@@ -2,8 +2,9 @@ import os
 
 from models.repository import Repository
 
-from .scanner import build_struct
 from .clone import clone_repo
+from .scanner import build_struct
+
 
 def load_repository(url: str) -> Repository:
     root = clone_repo(url)
@@ -17,6 +18,7 @@ def load_repository(url: str) -> Repository:
     #     root=os.path.abspath("./repos/test"),
     #     files=build_struct(os.path.abspath("./repos/test"))
     # )
+
 
 def load_source(path: str, root: str):
     rel_path = os.path.abspath(os.path.join(root, path))
