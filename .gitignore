@@ -3,3 +3,5 @@ repos
 *env
 *.env
 __pycache__
+graph.png
+lib

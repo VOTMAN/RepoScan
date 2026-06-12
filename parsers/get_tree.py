@@ -5,7 +5,7 @@ from repository.load import load_repository
 from .parser_registry import get_parser
 
 
-def get_tree(repo_url=None):
+def get_tree(repo_url: str | None = None):
     trees = {}
     if repo_url is None:
         print("No repo link given")

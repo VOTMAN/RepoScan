@@ -1,32 +1,33 @@
+from collections import deque
+
 from extractors import extract
+from graph import createGraph
 from parsers.get_tree import get_tree
 from repository.load import load_source
-from storage.retreiver import ask_repo
+from storage.retreiver import ask_repo, rewrite_query
 from storage.vec_db import getCollection
 
 
 def app():
     repo_url = input("Enter a repository link: ")
-
     repo, trees = get_tree(repo_url)
+    # repo, trees = get_tree("https://github.com/VOTMAN/passwordManager")
 
-    repo_name = repo.root.split("/")[-1]
+    repo_name = (repo.root.split("/")[-1]).lower()
     collection = getCollection(repo_name)
-    if collection.count() > 0:
-        print("Repo already indexed. Continue")
-    else:
+
+    for path, node in repo.files.items():
+        source = load_source(path, repo.root)
+        tree = trees.get(path)
+        node = extract(node, tree, source)
+        repo.files[path] = node
+
+    if collection.count() == 0:
         for path, node in repo.files.items():
+            print(f"=== {path} ===")
             ids = []
             documents = []
             metadatas = []
-
-            source = load_source(path, repo.root)
-            tree = trees.get(path)
-
-            print(f"\n=== {path} ===")
-            node = extract(node, tree, source)
-            # print(node)
-
             for c in node.chunks:
                 doc_id = f"{path}::{c.name}::{c.start_line}"
                 ids.append(doc_id)
@@ -36,7 +37,7 @@ def app():
                     Name: {c.name}
 
                     Imports:
-                    {", ".join(node.imports or [])}
+                    {", ".join(im.module for im in node.imports or [])}
 
                     Code:
                     {c.content}
@@ -54,16 +55,20 @@ def app():
                 )
 
             # print(ids, documents, metadatas, sep="\n\n")
-
             if not documents:
                 continue
 
             collection.add(ids=ids, documents=documents, metadatas=metadatas)
+    else:
+        print("Repo already indexed. Continue")
+
+    # G = createGraph(repo)
 
     history = []
     while True:
         qs = input("Enter your question: ")
-        # res = collection.query(query_texts=[qs], n_results=5)
+        search_query = rewrite_query(qs)
+        res = collection.query(query_texts=[search_query], n_results=5)
         # print(res)
         if qs.strip().lower() in ["q", "quit", "exit"]:
             print("Exiting...")

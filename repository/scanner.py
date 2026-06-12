@@ -1,12 +1,13 @@
 import os
 
-from models.repository import Repository
-from models.symbols import *
+from models.symbols import FileNode
 
 EXTENSION_MAP = {
     "py": "python",
     "js": "javascript",
     "ts": "typescript",
+    "jsx": "javascript xml",
+    "tsx": "typescript xml",
     "svelte": "svelte",
     "go": "go",
     "rs": "rust",
@@ -34,10 +35,20 @@ SUPPORTED_EXTENSIONS = {
     "yaml",
     "yml",
     "toml",
-    "md"
+    "md",
 }
 
-IGNORE = {".git", "node_modules", "env", ".venv", "package-lock.json", "__pycache__", ".next", "README.md"}
+IGNORE = {
+    ".git",
+    "node_modules",
+    "env",
+    ".venv",
+    "package-lock.json",
+    "__pycache__",
+    ".next",
+    "README.md",
+}
+
 
 def detect_language(filename: str) -> str:
     ext = filename.rsplit(".", 1)[-1] if "." in filename else ""
@@ -48,7 +59,6 @@ def build_struct(path: str, root: str | None = None) -> dict[str, FileNode]:
     result = {}
     if root is None:
         root = path
-
 
     for item in os.listdir(path):
         if item in IGNORE:

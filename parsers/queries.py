@@ -7,7 +7,6 @@ QUERIES = {
             (import_from_statement
                 module_name: (dotted_name) @module)
         """,
-
         "chunks": """
             (function_definition
                 name: (identifier) @name
@@ -17,24 +16,23 @@ QUERIES = {
                 name: (identifier) @name
             ) @chunk
 
-            ( assignment 
+            ( assignment
                 left: (identifier) @name
             ) @chunk
 
-            ( decorator 
+            ( decorator
             	(call
                 	function: (identifier) @name
-                )	
+                )
             ) @chunk
-            
-            ( expression_statement  
-            	(call
-                	function: (identifier) @name
-                )	
-            ) @chunk
-        """
-    },
 
+            ( expression_statement
+            	(call
+                	function: (identifier) @name
+                )
+            ) @chunk
+        """,
+    },
     "js": {
         "imports": """
             (import_statement
@@ -43,7 +41,6 @@ QUERIES = {
                 )
             )
         """,
-
         "chunks": """
             (function_declaration
                 name: (identifier) @name
@@ -53,7 +50,6 @@ QUERIES = {
                 name: (identifier) @name
             ) @chunk
         """,
-
         "exports": """
             (export_statement
                 declaration: (_) @decl
@@ -62,9 +58,8 @@ QUERIES = {
             (export_statement
                 value: (identifier) @default_export
             )
-        """
+        """,
     },
-
     "ts": {
         "imports": """
             (import_statement
@@ -73,7 +68,6 @@ QUERIES = {
                 )
             )
         """,
-
         "chunks": """
             (function_declaration
                 name: (identifier) @name
@@ -96,7 +90,6 @@ QUERIES = {
                 )
             ) @chunk
         """,
-
         "exports": """
             (export_statement
                 declaration: (_) @decl
@@ -105,6 +98,8 @@ QUERIES = {
             (export_statement
                 value: (identifier) @default_export
             )
-        """
-    }
+        """,
+    },
 }
+
+QUERIES["tsx"] = QUERIES["jsx"] = QUERIES["ts"]
