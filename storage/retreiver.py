@@ -24,7 +24,11 @@ def rewrite_query(question: str) -> str:
 
 
 def ask_repo(
-    repo_name: str, question: str, history: str = "", n_results: int = 5
+    repo_name: str,
+    question: str,
+    search_query: str,
+    history: str = "",
+    n_results: int = 5,
 ) -> str | None:
     user_content = ""
 
@@ -34,12 +38,12 @@ def ask_repo(
 
     if history != "":
         user_content += f"History: {history}\n\n"
-    print(history)
+    # print(history)
     collection = getCollection(repo_name)
     count = collection.count()
     n_results = min(n_results, count)
 
-    res = collection.query(query_texts=[question], n_results=n_results)
+    res = collection.query(query_texts=[search_query], n_results=n_results)
 
     documents = res["documents"][0]
 
