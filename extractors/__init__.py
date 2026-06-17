@@ -32,8 +32,14 @@ def parse_imports(import_matches: list[int, dict], code: str) -> list[str]:
         if "module" in capture:
             node = capture["module"][0]
             name = code[node.start_byte : node.end_byte]
+
+            names = []
+            if "import_name" in capture:
+                names = [
+                    code[n.start_byte : n.end_byte] for n in capture["import_name"]
+                ]
             imports.append(
-                ImportNode(module=name, names=[], is_relative=name.startswith("."))
+                ImportNode(module=name, names=names, is_relative=name.startswith("."))
             )
 
     return imports

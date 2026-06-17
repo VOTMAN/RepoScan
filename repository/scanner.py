@@ -36,6 +36,7 @@ SUPPORTED_EXTENSIONS = {
     "yml",
     "toml",
     "md",
+    "astro",
 }
 
 IGNORE = {
@@ -46,7 +47,6 @@ IGNORE = {
     "package-lock.json",
     "__pycache__",
     ".next",
-    "README.md",
 }
 
 

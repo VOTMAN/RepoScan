@@ -36,9 +36,14 @@ QUERIES = {
     "js": {
         "imports": """
             (import_statement
-                source: (string
-                    (string_fragment) @module
+                (import_clause
+                    (named_imports
+                        (import_specifier
+                            name: (identifier) @import_name
+                        )
+                    )
                 )
+                source: (string (string_fragment) @module)
             )
         """,
         "chunks": """
@@ -63,9 +68,14 @@ QUERIES = {
     "ts": {
         "imports": """
             (import_statement
-                source: (string
-                    (string_fragment) @module
+                (import_clause
+                    (named_imports
+                        (import_specifier
+                            name: (identifier) @import_name
+                        )
+                    )
                 )
+                source: (string (string_fragment) @module)
             )
         """,
         "chunks": """

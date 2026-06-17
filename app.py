@@ -1,6 +1,9 @@
+import json
+import os
 import sys
 from collections import deque
 
+from networkx.readwrite import json_graph
 from rich.console import Console
 from rich.markdown import Markdown
 from rich.panel import Panel
@@ -14,6 +17,7 @@ from rich.progress import (
 from rich.prompt import Prompt
 
 from extractors import extract
+from graph import createGraph
 from parsers.get_tree import get_tree
 from repository.load import load_source
 from storage.retreiver import ask_repo, rewrite_query
@@ -24,20 +28,22 @@ console = Console()
 HISTORY_LIMIT = 5
 
 
+os.makedirs("graphs", exist_ok=True)
+
+
 # Get repo and check if it already exits
 def ingest_repo(url: str):
     with console.status("[bold green]Cloning repository...", spinner="dots"):
         repo, trees = get_tree(url)
 
-    repo_name = repo.root.split("/")[-1]
-    collection = getCollection(repo_name)
+    collection = getCollection(repo.name)
 
     if collection.count() > 0:
         console.print(
-            f"[yellow]'{repo_name}' already indexed ({collection.count()} chunks). "
+            f"[yellow]'{repo.name}' already indexed ({collection.count()} chunks). "
             f"Skipping ingestion.[/yellow]"
         )
-        return repo_name
+        return repo.name
 
     files = list(repo.files.items())
 
@@ -64,7 +70,7 @@ def ingest_repo(url: str):
                     f"File: {c.path}\n"
                     f"Type: {c.kind}\n"
                     f"Name: {c.name}\n\n"
-                    f"Imports:\n{', '.join(node.imports or [])}\n\n"
+                    f"Imports:\n{', '.join(im.module for im in node.imports or [])}\n\n"
                     f"Code:\n{c.content}"
                 )
                 metadatas.append(
@@ -84,10 +90,21 @@ def ingest_repo(url: str):
 
             progress.advance(task)
 
+    G = createGraph(repo)
+    graph_data = json_graph.node_link_data(G)
+    try:
+        with open(
+            os.path.join("./graphs", f"{repo.owner}_{repo.name}_graph.json"), "w"
+        ) as f:
+            json.dump(graph_data, f, indent=2)
+            f.close()
+    except Exception as e:
+        print("An error occured while creating graph: ", e)
+
     console.print(
         f"[green]✓ Indexed {collection.count()} chunks from {len(files)} files[/green]"
     )
-    return repo_name
+    return repo.name
 
 
 def format_history(history: deque) -> str:

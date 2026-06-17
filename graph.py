@@ -20,31 +20,29 @@ def createGraph(repo: Repository | None) -> DiGraph | None:
             if not im.is_relative:
                 continue
 
-            resolved = resolve_import(node.path, im.module)
-            G.add_edge(node.path, resolved)
+            resolved = resolve_import(node.path, im.module, repo)
 
-    pos = nx.spring_layout(G, seed=68)
-    plt.figure(figsize=[20, 20])
-    nx.draw(
-        G,
-        pos,
-        with_labels=True,
-        node_size=500,
-        node_color="skyblue",
-    )
-    plt.title("Dependency Graph")
-    plt.savefig("graph.png")
+            G.add_edge(node.path, resolved, imports=im.names)
 
     return G
 
 
-def resolve_import(current_file: str, import_name: str):
+def resolve_import(current_file: str, import_name: str, repo):
     base_dir = os.path.dirname(current_file)
     base = os.path.normpath(os.path.join(base_dir, import_name))
 
-    for ext in ["ts", "tsx", "js", "jsx", "py"]:
-        candidate = f"{base}.{ext}"
-        if os.path.exists(candidate):
+    candidates = [
+        base,
+        f"{base}.ts",
+        f"{base}.tsx",
+        f"{base}.js",
+        f"{base}.jsx",
+        f"{base}.py",
+        f"{base}.svelte",
+    ]
+
+    for candidate in candidates:
+        if candidate in repo.files:
             return candidate
 
     return base

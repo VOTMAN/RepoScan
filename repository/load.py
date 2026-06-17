@@ -7,10 +7,12 @@ from .scanner import build_struct
 
 
 def load_repository(url: str) -> Repository:
-    root = clone_repo(url)
+    root, name, owner = clone_repo(url)
 
     return Repository(
         root=root,
+        name=name,
+        owner=owner,
         files=build_struct(path=root),
     )
 
