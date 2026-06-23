@@ -5,6 +5,7 @@ from parsers.queries import QUERIES
 
 PYTHON_LANGUAGE = get_language("py")
 
+
 def queryPython(tree: Tree):
     queries = QUERIES["py"]
 
@@ -14,5 +15,5 @@ def queryPython(tree: Tree):
         query_cursor = QueryCursor(query)
         match = query_cursor.matches(tree.root_node)
         matches[query_type] = match
-    
+
     return matches

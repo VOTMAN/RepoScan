@@ -5,6 +5,7 @@ from parsers.queries import QUERIES
 
 TYPESCRIPT_LANGUAGE = get_language("ts")
 
+
 def queryTS(tree: Tree):
     queries = QUERIES["ts"]
 
@@ -14,5 +15,5 @@ def queryTS(tree: Tree):
         query_cursor = QueryCursor(query)
         match = query_cursor.matches(tree.root_node)
         matches[query_type] = match
-    
+
     return matches

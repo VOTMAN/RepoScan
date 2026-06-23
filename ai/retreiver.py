@@ -44,7 +44,7 @@ def ask_repo(
     n_results = min(n_results, count)
 
     res = collection.query(query_texts=[search_query], n_results=n_results)
-
+    print(search_query, res)
     documents = res["documents"][0]
 
     user_content += f"Context: {documents}\n\nQuestion: {question}"

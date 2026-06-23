@@ -5,6 +5,7 @@ from parsers.queries import QUERIES
 
 JAVASCRIPT_LANGUAGE = get_language("js")
 
+
 def queryJS(tree: Tree):
     queries = QUERIES["js"]
 
@@ -14,5 +15,5 @@ def queryJS(tree: Tree):
         query_cursor = QueryCursor(query)
         match = query_cursor.matches(tree.root_node)
         matches[query_type] = match
-    
+
     return matches

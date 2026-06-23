@@ -5,3 +5,4 @@ repos
 __pycache__
 graph.png
 lib
+graphs/

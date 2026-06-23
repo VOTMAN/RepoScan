@@ -16,12 +16,12 @@ from rich.progress import (
 )
 from rich.prompt import Prompt
 
+from ai.retreiver import ask_repo, rewrite_query
+from ai.vec_db import getCollection
+from dep_graph import createGraph
 from extractors import extract
-from graph import createGraph
 from parsers.get_tree import get_tree
 from repository.load import load_source
-from storage.retreiver import ask_repo, rewrite_query
-from storage.vec_db import getCollection
 
 console = Console()
 
